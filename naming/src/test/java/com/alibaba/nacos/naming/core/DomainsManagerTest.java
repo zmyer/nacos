@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author dungu.zpf
+ * @author <a href="mailto:zpf.073@gmail.com">nkorange</a>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = MockServletContext.class)
@@ -59,7 +59,7 @@ public class DomainsManagerTest extends BaseTest {
 
         IpAddress ipAddress = new IpAddress();
         ipAddress.setIp("1.1.1.1");
-        List<IpAddress> ipList = new ArrayList<>();
+        List<IpAddress> ipList = new ArrayList<IpAddress>();
         ipList.add(ipAddress);
         domainsManager.addLock("nacos.test.1");
         domainsManager.easyRemvIP4Dom("nacos.test.1", ipList);

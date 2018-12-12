@@ -23,7 +23,6 @@ import com.alibaba.nacos.client.naming.utils.StringUtils;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.nio.charset.Charset;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
@@ -78,29 +77,28 @@ public class PushRecver implements Runnable {
                 PushPacket pushPacket = JSON.parseObject(json, PushPacket.class);
                 String ack;
                 if ("dom".equals(pushPacket.type)) {
-                    // dom update
-                    hostReactor.processDomJSON(pushPacket.data);
+                    hostReactor.processServiceJSON(pushPacket.data);
 
                     // send ack to server
                     ack = "{\"type\": \"push-ack\""
-                            + ", \"lastRefTime\":\"" + pushPacket.lastRefTime
-                            + "\", \"data\":" + "\"\"}";
+                        + ", \"lastRefTime\":\"" + pushPacket.lastRefTime
+                        + "\", \"data\":" + "\"\"}";
                 } else if ("dump".equals(pushPacket.type)) {
                     // dump data to server
                     ack = "{\"type\": \"dump-ack\""
-                            + ", \"lastRefTime\": \"" + pushPacket.lastRefTime
-                            + "\", \"data\":" + "\""
-                            + StringUtils.escapeJavaScript(JSON.toJSONString(hostReactor.getDomMap()))
-                            + "\"}";
+                        + ", \"lastRefTime\": \"" + pushPacket.lastRefTime
+                        + "\", \"data\":" + "\""
+                        + StringUtils.escapeJavaScript(JSON.toJSONString(hostReactor.getServiceInfoMap()))
+                        + "\"}";
                 } else {
                     // do nothing send ack only
                     ack = "{\"type\": \"unknown-ack\""
-                            + ", \"lastRefTime\":\"" + pushPacket.lastRefTime
-                            + "\", \"data\":" + "\"\"}";
+                        + ", \"lastRefTime\":\"" + pushPacket.lastRefTime
+                        + "\", \"data\":" + "\"\"}";
                 }
 
                 udpSocket.send(new DatagramPacket(ack.getBytes(Charset.forName("UTF-8")),
-                        ack.getBytes(Charset.forName("UTF-8")).length, packet.getSocketAddress()));
+                    ack.getBytes(Charset.forName("UTF-8")).length, packet.getSocketAddress()));
             } catch (Exception e) {
                 LogUtils.LOG.error("NA", "error while receiving push data", e);
             }
